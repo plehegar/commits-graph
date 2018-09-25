@@ -1,0 +1,71 @@
+{
+  "49799": {
+    "specs": {
+      "https://www.w3.org/TR/webdriver1/": { "repo": "w3c/webdriver" }
+    }
+  },
+  "44556": {
+    "specs": {
+      "https://www.w3.org/TR/WOFF2/" : { "repo": "w3c/woff" }
+    }
+  },
+  "45211": {
+    "specs": {
+      "https://www.w3.org/TR/device-memory/": { "repo": "w3c/device-memory" }
+    }
+  },
+  "83482": {
+    "specs": {
+      "http://www.w3.org/TR/IndexedDB/": { "repo": "w3c/IndexedDB" },
+      "https://www.w3.org/TR/ContentEditable/": { "repo": "w3c/editing" }
+    }
+  },
+  "40318": {
+    "specs": {
+      "https://www.w3.org/TR/encrypted-media/": { "repo": "w3c/encrypted-media" },
+      "https://www.w3.org/TR/media-source/": { "repo": "w3c/media-source" }
+    }
+  },
+  "43696": {
+    "specs": {
+      "https://www.w3.org/TR/html-media-capture/": { "repo": "w3c/html-media-capture"}
+    }
+  },
+  "49309": {
+    "specs": {
+      "http://www.w3.org/TR/SRI/": { "repo": "w3c/webappsec-subresource-integrity" }
+    }
+  },
+  "35532": {
+    "specs": {
+"https://github.com/w3c/wai-intro-accessibility" : { "repo": "w3c/wai-intro-accessibility", "isSpec": false },
+"https://github.com/w3c/wai-accessibility-principles" : { "repo": "w3c/wai-accessibility-principles", "isSpec": false },
+"https://github.com/w3c/wai-showcase-examples" : { "repo": "w3c/wai-showcase-examples", "isSpec": false },
+"https://github.com/w3c/wai-people-use-web" : { "repo": "w3c/wai-people-use-web", "isSpec": false },
+"https://github.com/w3c/wai-older-users" : { "repo": "w3c/wai-older-users", "isSpec": false },
+"https://github.com/w3c/wai-inclusion" : { "repo": "w3c/wai-inclusion", "isSpec": false },
+"https://github.com/w3c/wai-first-aid" : { "repo": "w3c/wai-first-aid", "isSpec": false },
+"https://github.com/w3c/wai-bcase" : { "repo": "w3c/wai-bcase", "isSpec": false },
+"https://github.com/w3c/wai-dynamic-planning" : { "repo": "w3c/wai-dynamic-planning", "isSpec": false },
+"https://github.com/w3c/wai-org-policies" : { "repo": "w3c/wai-org-policies", "isSpec": false },
+"https://github.com/w3c/wai-InvolveUsersAll" : { "repo": "w3c/wai-InvolveUsersAll", "isSpec": false },
+"https://github.com/w3c/wai-policies-prototype" : { "repo": "w3c/wai-policies-prototype", "isSpec": false },
+"https://github.com/w3c/wai-quick-start" : { "repo": "w3c/wai-quick-start", "isSpec": false },
+"https://github.com/w3c/wai-tutorials" : { "repo": "w3c/wai-tutorials", "isSpec": false },
+"https://github.com/w3c/EasyChecks" : { "repo": "w3c/EasyChecks", "isSpec": false },
+"https://github.com/w3c/wai-selecting-eval-tools" : { "repo": "w3c/wai-selecting-eval-tools", "isSpec": false },
+"https://github.com/w3c/wai-eval-tools" : { "repo": "w3c/wai-eval-tools", "isSpec": false },
+"https://github.com/w3c/wcag-em-report-tool" : { "repo": "w3c/wcag-em-report-tool", "isSpec": false },
+"https://github.com/w3c/wai-eval-report-templates" : { "repo": "w3c/wai-eval-report-templates", "isSpec": false },
+"https://github.com/w3c/wai-InvolveUsersEval" : { "repo": "w3c/wai-InvolveUsersEval", "isSpec": false },
+"https://github.com/w3c/wai-presentations2all" : { "repo": "w3c/wai-presentations2all", "isSpec": false },
+"https://github.com/w3c/wai-develop-training" : { "repo": "w3c/wai-develop-training", "isSpec": false },
+"https://github.com/w3c/wai-contacting-orgs" : { "repo": "w3c/wai-contacting-orgs", "isSpec": false },
+"https://github.com/w3c/wai-bad-demo" : { "repo": "w3c/wai-bad-demo", "isSpec": false },
+"https://github.com/w3c/wai-std-harmonization" : { "repo": "w3c/wai-std-harmonization", "isSpec": false },
+"https://github.com/w3c/wai-wcag-mob-overlap" : { "repo": "w3c/wai-wcag-mob-overlap", "isSpec": false },
+"https://github.com/w3c/wai-shared-experiences" : { "repo": "w3c/wai-shared-experiences", "isSpec": false },
+"https://github.com/w3c/wai-wcag-quickref" : { "repo": "w3c/wai-wcag-quickref", "isSpec": false }
+    }
+  }
+}

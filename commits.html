@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Monthly GitHub commits</title>
+<style>
+
+.axis--x path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.meeting line {
+  fill: none;
+  stroke: lightsteelblue;
+  opacity: 0.8;
+  pointer-events: none;
+  stroke-width: 1.5px;
+}
+
+rect.month {
+  fill: lightgoldenrodyellow;
+  stroke: none;
+  opacity: 0.8;
+  pointer-events: none;
+}
+rect.month:nth-child(odd) {
+  fill: white;
+}
+/* Tooltip */
+#tooltip {
+	pointer-events: none;
+	opacity: 0;
+}
+#tooltip path {
+	fill: #aaa;
+}
+#tooltip .content text {
+	text-anchor: middle;
+	fill: black;
+}
+#tooltip text.title {
+	font-weight: bold;
+}
+#tooltip text.temp {
+	font-size: 16px;
+}
+
+</style>
+<h1>Monthly GitHub commits from August 2016 to August 2018</h1>
+<svg id='graph1' style="height:90vh" viewBox="0 0 1024 1024">
+    <defs>
+        <filter id="dropshadow" height="130%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+          <feOffset dx="2" dy="2" result="offsetblur"/>
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.2"/>
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+    </defs>
+    <g id="container">
+      <g id='back'></g>
+      <g id='all'></g>
+      <g id="highlight">
+        <path></path>
+      </g>
+      <g id='front'></g>
+      <g id="tooltip" transform="translate(-2000, 0)">
+        <g class="wrapper">
+          <circle id="highlighter" r="3"></circle>
+          <g class="content" transform="translate(0, -75)">
+            <text class="title" translate="transform(0,3)"></text>
+            <text class="temp" transform="translate(0,21)"></text>
+          </g>
+        </g>
+      </g>
+    </g>
+</svg>
+<ul>
+    <li><span id="ngroups"></span> groups with known GitHub repositories</li>
+    <li><span id="nrepositories"></span> known GitHub repositories, containing <span id="nspecs"></span> specifications</li>
+    <li><span id="ncommits"></span> commits from August 2016 to August 2018</li>
+  </ul>
+  <h2>Others</h2>
+
+  <ul id='options'>
+    <li>See the <a href="?">default view</a></li>
+  </ul>
+
+  <h2>List of known repositories per Group</h2>
+  <ul id="repos">
+
+  </ul>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+// #lazyweb
+function getJsonFromUrl() {
+     let query = location.search.substr(1);
+     let result = {};
+     query.split("&").forEach(function(part) {
+      let item = part.split("=");
+      result[item[0]] = decodeURIComponent(item[1]);
+     });
+    return result;
+  }
+let urlParams  = getJsonFromUrl();
+
+let svg = d3.select("svg#graph1"),
+    margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = 1024 - margin.left - margin.right,
+    height = 1024 - margin.top - margin.bottom,
+    container = d3.select("#container").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
+    back = d3.select("#back"),
+    front = d3.select("#front"),
+    tooltip = d3.select("#tooltip"),
+    highlighter = d3.select("#highlighter"),
+    g = d3.select("#all");
+
+let parseTime = d3.timeParse("%Y-%m-%d");
+
+let x = d3.scaleTime().range([0, width]),
+    y = d3.scaleLinear().range([height, 0]),
+    colors = d3.scaleOrdinal(d3.schemeCategory20);
+
+let line = d3.line()
+    .curve(d3.curveBasis)
+    .x(d => x(d.date))
+    .y(d => y(d.count));
+
+d3.json("commits.json", function(error, groups) {
+  if (error) throw error;
+
+  let total = { "name": "ALL GROUPS", id: 0 };
+  if (urlParams["total"]) {
+    total.commits = groups[0].commits.map(c => { return { "date" : c.date, "count": 0 } } );
+    groups.forEach(g => g.commits.forEach( (c, idx) => total.commits[idx].count += c.count ));
+  }
+
+  groups = groups.sort(function(a, b) {
+  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+
+  // names must be equal
+  return 0;
+  });
+  // populate the options
+  {
+    let ul = document.getElementById("options");
+    let li = document.createElement("li");
+    let st = "include the <a href=\"?total";
+    if (urlParams["gid"]) {
+      st += "&gid=" + urlParams["gid"];
+    }
+    st += "\">overall total</a>";
+    li.innerHTML = st;
+    ul.append(li);
+    groups.forEach(g => {
+      let li = document.createElement("li");
+      li.innerHTML = "only show <a href=\"?gid=" + g.id
+        + "\">" + g.name + "</a>";
+      ul.append(li);
+    });
+  }
+
+  // populate the repos
+  {
+    let ul = document.getElementById("repos");
+    let li = document.createElement("li");
+    groups.forEach(g => {
+      let li = document.createElement("li");
+      let s = g.name + ": ";
+      g.repos.forEach(r => {
+        s += "<a href='https://github.com/" + r + "'>" + r + "</a>, ";
+      })
+      li.innerHTML = s;
+      ul.append(li);
+    });
+  }
+
+
+  if (urlParams["gid"]) {
+    let gid = urlParams["gid"];
+    groups = groups.filter(g => g.id === gid);
+    if (groups.length === 1) {
+      let group = groups[0];
+      let h1 = document.querySelector("h1");
+      let text = document.createTextNode(" for the " + group.name);
+      h1.appendChild(text);
+    }
+  }
+
+
+  // fill the textual information
+  {
+    document.getElementById("ngroups").textContent = groups.length;
+    document.getElementById("nrepositories").textContent =
+      groups.reduce((ac, g) => ac + g.repos.length, 0);
+    document.getElementById("nspecs").textContent =
+      groups.reduce((ac, g) => ac + g.specs.length, 0);
+    document.getElementById("ncommits").textContent =
+      groups.reduce((ac, g) => ac + g.commits.reduce((a, c) => a + c.count, 0), 0);
+  }
+
+  if (urlParams["total"]) {
+    groups.push(total);
+  }
+
+  // transform in real JS date
+  groups.forEach(g => g.commits.forEach(c => c.date = parseTime(c.date)));
+
+  // date domain
+  x.domain([ parseTime("2016-08-15"), parseTime("2018-09-01")]);
+
+  // # of commits domain
+  let ymax = d3.max(groups, c => d3.max(c.commits, c => c.count) );
+  y.domain([ 0 , ymax ]);
+
+  // colors domain
+  colors.domain(groups.map(c => c.id));
+
+  front.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // expected off times
+  let previous = null;
+  ["2016", "2017", "2018"].forEach((year, idx, years) => {
+      let start = (idx === 0)? 8 : 1;
+      let end = (idx+1 === years.length)? 10 : 13;
+      for (let n = start; n < end; n++) {
+        const d = parseTime(year + "-" + (n + "").padStart(2, '0') + "-01");
+        if (previous != null) {
+          back.append("rect")
+            .attr("class", "month")
+            .attr("x", x(previous))
+            .attr("y", y(ymax))
+            .attr("width", x(d) - x(previous))
+            .attr("height", y(0))
+        }
+        previous = d;
+      }
+    });
+
+  [[ "2016-09-19", "TPAC 2016"],
+  [ "2017-04-23", "AC 2017" ] ,
+  [ "2017-11-06", "TPAC 2017" ],
+  [ "2018-05-13", "AC 2018"]].forEach(d => {
+    let x1 = x(parseTime(d[0]));
+    let g = back.append("g")
+      .attr("class", "meeting");
+    g.append("line").attr("x1", x1)
+      .attr("y1", y(0))
+      .attr("x2", x1)
+      .attr("y2", y(ymax));
+    g.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("text-anchor", "end")
+      .attr("x", 0)
+      .attr("y", x1)
+      .attr("dy", "1em")
+      .attr("fill", "black")
+      .text(d[1]);
+  });
+
+  front.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y))
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("fill", "#000")
+      .text("# of commits");
+
+  let updateTooltip = (x, y, name) => {
+    tooltip.style("opacity", .85).attr("transform", "translate(" + x + "," + y + ")");
+    tooltip.select(".content .title").text(name);
+  }
+
+  let group = g.selectAll(".group")
+    .data(groups)
+    .enter().append("g")
+      .attr("id", g => "id" + g.id)
+      .attr("class", "group");
+
+  let over = null;
+  group.on("mouseover", function (a, e) {
+    let mouse = d3.mouse(this);
+    over = a;
+    updateTooltip(mouse[0], mouse[1], a.name, mouse[1]);
+    d3.event.stopPropagation();
+  });
+
+  group.append("path")
+      .attr("class", "line")
+      .attr("d", g => line(g.commits))
+      .style("stroke", g => colors(g.id));
+
+  group.append("text")
+      .datum(g => { return {name: g.name, value: g.commits[g.commits.length - 1]}; })
+      .attr("transform", g => "translate(" + x(g.value.date) + "," + y(g.value.count) + ")")
+      .attr("x", 3)
+      .attr("dy", "0.35em")
+      .style("font", "10px sans-serif")
+      .text(g => g.name);
+});
+
+</script>
+
