@@ -9,6 +9,16 @@
       "https://www.w3.org/TR/WOFF2/" : { "repo": "w3c/woff" }
     }
   },
+  "18797": {
+    "specs": {
+      "https://www.w3.org/TR/xquery-31/" : { "repo": "w3c/qtspecs" }
+    }
+  },
+  "19552": {
+    "specs": {
+      "https://www.w3.org/TR/xslt-30/" : { "repo": "w3c/qtspecs" }
+    }
+  },
   "45211": {
     "specs": {
       "https://www.w3.org/TR/device-memory/": { "repo": "w3c/device-memory" }
