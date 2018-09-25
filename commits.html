@@ -98,6 +98,10 @@ rect.month:nth-child(odd) {
   <ul id="repos">
 
   </ul>
+
+<hr>
+<a href='https://github.com/plehegar/commits-graph'>GitHub</a>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 // #lazyweb
@@ -134,9 +138,7 @@ let line = d3.line()
     .x(d => x(d.date))
     .y(d => y(d.count));
 
-d3.json("commits.json", function(error, groups) {
-  if (error) throw error;
-
+fetch("commits.json").then(res => res.json()).then(groups => {
   let total = { "name": "ALL GROUPS", id: 0 };
   if (urlParams["total"]) {
     total.commits = groups[0].commits.map(c => { return { "date" : c.date, "count": 0 } } );
