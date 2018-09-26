@@ -25,7 +25,7 @@ async function gatherRepos() {
       obj.repos = [];
       obj.specs = [];
       for (let spec in specs) {
-        let repo = specs[spec].repo.owner + '/' + specs[spec].repo.name;
+        let repo = (specs[spec].repo.owner + '/' + specs[spec].repo.name).toLowerCase();
         if (!obj.repos.includes(repo)
             && specs[spec].repo.owner != "whatwg" // whatwg/encoding
             && specs[spec].repo.owner != "wicg") // for now
@@ -43,17 +43,17 @@ async function gatherRepos() {
       if (GAPS[key]) {
         for (let spec in GAPS[key].specs) {
           let so = GAPS[key].specs[spec];
-          let repo = so.repo;
+          let repo = so.repo.toLowerCase();
           if (!obj.repos.includes(repo)) {
             if (allRepos[repo]) {
-              console.warn("[WARN] Duplicate repository " + repo + " from " + allRepos[repo].name);
+              console.warn("[WARN] GAPS Duplicate repository " + repo + " from " + allRepos[repo].name);
             } else {
               obj.repos.push(repo);
               allRepos[repo] = obj;
             }
           }
           if (so.isSpec === undefined)
-          obj.specs.push(spec);
+            obj.specs.push(spec);
         }
       }
       if (obj.repos.length > 0) {
@@ -81,16 +81,27 @@ async function gatherRepos() {
 async function foolipInfos(groups) {
   let repos = groups.reduce((ac, g) => ac.concat(g.repos), []);
   // await forces the function to wait until the error console messages have been printed
-  let result = await io.fetch("https://foolip.github.io/day-to-day/data.json").then(res=>res.json())
-    .then(data =>
-      data.specs.forEach(s => {
-        if (s.specrepo.indexOf("w3c/") === 0) {
-          if (!repos.includes(s.specrepo)) {
-            console.warn("[WARN] Consider adding " + s.specrepo + " " + s.href);
-          }
+  let result = await io.fetch("https://foolip.github.io/day-to-day/data.json").then(res=>res.json());
+  result.specs.forEach(s => {
+      if (s.specrepo.indexOf("w3c/") === 0) {
+        if (!repos.includes(s.specrepo)) {
+          console.warn("[WARN] Consider adding " + s.specrepo + " " + s.href);
         }
-      })
-    )
+      }
+    });
+}
+
+// track ash-nazg data source to make additional suggestions
+async function ashnazg(groups) {
+  let repos = groups.reduce((ac, g) => ac.concat(g.repos), []);
+  const ASHNAZG = await io.fetch("https://labs.w3.org/hatchery/repo-manager/api/repos").then(res => res.json())
+     .then(repos => repos.filter(r => r.groups[0].groupType === "WG"
+                                      && r.fullName.indexOf("w3c/") === 0));
+  // await forces the function to wait until the error console messages have been printed
+  ASHNAZG.forEach(r => {
+    if (!repos.includes(r.fullName.toLowerCase()))
+    console.warn("[WARN] Consider adding " + r.fullName.toLowerCase());
+  })
 }
 
 
@@ -115,7 +126,7 @@ async function gatherCommits(gr) {
         .then(res => {
           repos.push({ "name": r, "commits": res});
           return null;
-        })
+        }).catch(console.error)
       );
     });
   });
@@ -137,6 +148,8 @@ async function main() {
 
   // wait until the error messages are printed
   let ignore = await foolipInfos(groups);
+
+  ignore = await ashnazg(groups);
 
   let commits = await gatherCommits(groups);
 
@@ -165,4 +178,4 @@ async function main() {
   await io.save("commits.json", groups);
 }
 
-main();
+main().catch(console.error);

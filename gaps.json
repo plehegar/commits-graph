@@ -46,6 +46,14 @@
       "http://www.w3.org/TR/SRI/": { "repo": "w3c/webappsec-subresource-integrity" }
     }
   },
+  "83744": {
+    "specs": {
+      "https://github.com/w3c/webpayments-crypto": { "repo": "w3c/webpayments-crypto" },
+      "https://github.com/w3c/webpayments-http-api": { "repo": "w3c/webpayments-http-api" },
+      "https://github.com/w3c/payment-method-credit-transfer": { "repo": "w3c/payment-method-credit-transfer" },
+      "https://github.com/w3c/webpayments-methods-tokenization": { "repo": "w3c/webpayments-methods-tokenization" }
+    }
+  },
   "35532": {
     "specs": {
 "https://github.com/w3c/wai-intro-accessibility" : { "repo": "w3c/wai-intro-accessibility", "isSpec": false },
