@@ -160,7 +160,7 @@ async function main() {
     g.commits = [];
     ["2016", "2017", "2018"].forEach((year, idx, years) => {
       let start = (idx === 0)? 8 : 1;
-      let end = (idx+1 === years.length)? 9 : 13;
+      let end = (idx+1 === years.length)? 10 : 13;
       for (let n = start; n < end; n++) {
         const month = year + "-" + (n + "").padStart(2, '0');
         let gmonth = {"date": month + "-15", "count": 0};
