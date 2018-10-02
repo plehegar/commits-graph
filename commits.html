@@ -238,25 +238,29 @@ fetch("commits.json").then(res => res.json()).then(groups => {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
-  // expected off times
+  // generate months alternate background
   let previous = null;
   ["2016", "2017", "2018"].forEach((year, idx, years) => {
       let start = (idx === 0)? 8 : 1;
-      let end = (idx+1 === years.length)? 10 : 13;
+      let end = (idx+1 === years.length)? 11 : 13;
       for (let n = start; n < end; n++) {
         const d = parseTime(year + "-" + (n + "").padStart(2, '0') + "-01");
+        let width = x(d) - x(previous);
+        if (idx+1 === years.length && n+1 === end) width = width / 2;
         if (previous != null) {
           back.append("rect")
             .attr("class", "month")
             .attr("x", x(previous))
             .attr("y", y(ymax))
-            .attr("width", x(d) - x(previous))
+            .attr("width", width)
             .attr("height", y(0))
         }
         previous = d;
       }
     });
 
+
+  // mark the major events
   [[ "2016-09-19", "TPAC 2016"],
   [ "2017-04-23", "AC 2017" ] ,
   [ "2017-11-06", "TPAC 2017" ],
